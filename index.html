@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIB Services - Summer 2025 Action List</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 15px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+            border-left: 5px solid #3498db;
+            padding-left: 10px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #ecf0f1;
+            margin-bottom: 10px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        li:hover {
+            background-color: #dde1e2;
+        }
+        li.completed {
+            background-color: #d4edda;
+            text-decoration: line-through;
+            color: #555;
+            transition: background-color 0.3s ease;
+        }
+        input[type="checkbox"] {
+            margin-right: 15px;
+            min-width: 20px; /* Ensure checkbox size */
+            min-height: 20px;
+            cursor: pointer;
+            accent-color: #27ae60; /* Green for checked state */
+        }
+        .task-description {
+            flex-grow: 1;
+        }
+        .sub-tasks {
+            margin-top: 10px;
+            padding-left: 30px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .sub-tasks li {
+            background-color: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            box-shadow: none;
+            border: 1px solid #eee;
+        }
+        .note {
+            background-color: #fef9e7;
+            border-left: 5px solid #f39c12;
+            padding: 15px;
+            margin-top: 25px;
+            border-radius: 8px;
+            font-style: italic;
+            color: #7d6608;
+        }
+        .helper-info {
+            font-weight: bold;
+            color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>VIB Services - Summer 2025 Action List</h1>
+
+        <div class="note">
+            Remember: We'll integrate this with Cloud Firestore later for persistence and dynamic updates! For now, checkboxes will work client-side.
+        </div>
+
+        <h2>📦 Nanu Nani House Stuff Online Sale</h2>
+        <ul>
+            <li>
+                <input type="checkbox" id="sell-nanu-nani-stuff">
+                <label for="sell-nanu-nani-stuff" class="task-description">
+                    Sell Nanu Nani house stuff online
+                    <ul class="sub-tasks">
+                        <li>Bike</li>
+                        <li>Tech stuff</li>
+                        <li>Indian outfits</li>
+                        <li>Sono's surround sound bar</li>
+                        <li>Anything else we don't need</li>
+                    </ul>
+                </label>
+            </li>
+            <li>
+                <input type="checkbox" id="breggs-machine">
+                <label for="breggs-machine" class="task-description">Breggs machine</label>
+            </li>
+            <li>
+                <input type="checkbox" id="take-pics-marketplace">
+                <label for="take-pics-marketplace" class="task-description">
+                    Take pictures and list items on marketplace, negotiate sales
+                    <div class="helper-info">Helper: Miss Jiya Rani Bajaj</div>
+                    <div class="sub-tasks">VIB services will get 50% of the sale</div>
+                </label>
+            </li>
+        </ul>
+
+        <h2>💻 Tech Optimization & Teaching</h2>
+        <ul>
+            <li>
+                <input type="checkbox" id="optimize-nanu-computer">
+                <label for="optimize-nanu-computer" class="task-description">Optimize Nanu's computer and organize his email account</label>
+            </li>
+            <li>
+                <input type="checkbox" id="nixplay-update">
+                <label for="nixplay-update" class="task-description">
+                    Nixplay updated and make different playlists, get pics from family
+                </label>
+            </li>
+            <li>
+                <input type="checkbox" id="optimize-nanu-tv">
+                <label for="optimize-nanu-tv" class="task-description">Optimize Nanu's new TV and surround sound and teach us as well</label>
+            </li>
+        </ul>
+
+        <h2>👨‍🏫 Laptop Teaching</h2>
+        <ul>
+            <li>
+                <input type="checkbox" id="set-reminders">
+                <label for="set-reminders" class="task-description">Set Reminders</label>
+            </li>
+            <li>
+                <input type="checkbox" id="sync-calendars">
+                <label for="sync-calendars" class="task-description">Sync calendars</label>
+            </li>
+        </ul>
+
+        <h2>🌐 Connectivity & Devices</h2>
+        <ul>
+            <li>
+                <input type="checkbox" id="check-wifi-extenders">
+                <label for="check-wifi-extenders" class="task-description">Check our WiFi extenders</label>
+            </li>
+            <li>
+                <input type="checkbox" id="new-phone">
+                <label for="new-phone" class="task-description">
+                    Investigate new phone (currently 12 max, getting dropped calls)
+                </label>
+            </li>
+            <li>
+                <input type="checkbox" id="google-one-share">
+                <label for="google-one-share" class="task-description">Google One share with 5</label>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+            checkboxes.forEach(checkbox => {
+                // Load state from localStorage on page load (basic persistence)
+                const savedState = localStorage.getItem(checkbox.id);
+                if (savedState === 'checked') {
+                    checkbox.checked = true;
+                    checkbox.parentElement.classList.add('completed');
+                }
+
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        this.parentElement.classList.add('completed');
+                        localStorage.setItem(this.id, 'checked'); // Save state
+                    } else {
+                        this.parentElement.classList.remove('completed');
+                        localStorage.removeItem(this.id); // Remove state
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
