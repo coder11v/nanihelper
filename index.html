@@ -3,217 +3,451 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIB Services - Summer 2025 Action List</title>
+    <title>VibHelper</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-        }
-        .container {
-            background-color: #ffffff;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            width: 100%;
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.2em;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 15px;
-        }
-        h2 {
-            color: #34495e;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 1.6em;
-            border-left: 5px solid #3498db;
-            padding-left: 10px;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            background-color: #ecf0f1;
-            margin-bottom: 10px;
-            padding: 15px 20px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            transition: background-color 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        li:hover {
-            background-color: #dde1e2;
-        }
-        li.completed {
-            background-color: #d4edda;
-            text-decoration: line-through;
-            color: #555;
-            transition: background-color 0.3s ease;
-        }
-        input[type="checkbox"] {
-            margin-right: 15px;
-            min-width: 20px; /* Ensure checkbox size */
-            min-height: 20px;
-            cursor: pointer;
-            accent-color: #27ae60; /* Green for checked state */
-        }
-        .task-description {
-            flex-grow: 1;
-        }
-        .sub-tasks {
-            margin-top: 10px;
-            padding-left: 30px;
-            font-size: 0.9em;
-            color: #555;
-        }
-        .sub-tasks li {
-            background-color: #f8f9fa;
-            padding: 8px 15px;
-            border-radius: 5px;
-            margin-top: 5px;
-            margin-bottom: 5px;
-            box-shadow: none;
-            border: 1px solid #eee;
-        }
-        .note {
-            background-color: #fef9e7;
-            border-left: 5px solid #f39c12;
-            padding: 15px;
-            margin-top: 25px;
-            border-radius: 8px;
-            font-style: italic;
-            color: #7d6608;
-        }
-        .helper-info {
-            font-weight: bold;
-            color: #2980b9;
-        }
-    </style>
+    * {
+        box-sizing: border-box;
+    }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        background-color: #f0f2f5;
+        color: #333;
+        line-height: 1.6;
+    }
+    .container {
+        background-color: #fff;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        max-width: 800px; /* Max width for the container */
+        margin: 30px auto; /* Center container */
+    }
+    h1, h2, h3 {
+        color: #333;
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+    h1 {
+        text-align: center;
+        color: #007bff;
+        margin-bottom: 25px;
+        font-size: 2.2em;
+    }
+    h2 {
+        font-size: 1.6em;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    button {
+        padding: 10px 18px;
+        margin: 5px; /* Consistent margin */
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        font-size: 0.95em;
+    }
+    button:hover {
+        background-color: #0056b3;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    button.secondary { /* For less prominent buttons like complete/undo */
+        background-color: #6c757d;
+        padding: 6px 12px; /* Smaller padding */
+        font-size: 0.85em;
+    }
+    button.secondary:hover {
+        background-color: #545b62;
+    }
+    input[type="text"],
+    input[type="file"] {
+        width: calc(100% - 24px); /* Adjust for padding */
+        padding: 12px;
+        margin: 5px 0 15px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1em;
+    }
+    input[type="text"]:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        outline: none;
+    }
+    input[type="file"] {
+      padding: 8px; /* Specific padding for file input */
+    }
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    li {
+        padding: 12px 8px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.1s ease;
+    }
+    li:hover {
+        background-color: #f9f9f9;
+    }
+    li:last-child {
+        border-bottom: none;
+    }
+    .task-item-text { /* Wrap task text in a span for better control */
+        flex-grow: 1;
+        margin-right: 10px;
+    }
+    .task-item.completed .task-item-text { /* Target the span */
+        text-decoration: line-through;
+        color: #888;
+    }
+    .view {
+        display: none; /* Hidden by default */
+        padding: 20px 0;
+        margin-top:15px;
+        border-top: 2px dashed #e0e0e0;
+    }
+    .chat-messages {
+        height: 180px; /* Slightly taller */
+        overflow-y: auto;
+        border: 1px solid #e0e0e0;
+        padding: 12px;
+        margin-bottom: 12px;
+        background-color: #fdfdfd;
+        border-radius: 5px;
+    }
+    .message {
+        margin-bottom: 10px;
+        padding: 8px 12px;
+        border-radius: 15px; /* Bubble like */
+        background-color: #e9ecef;
+        font-size: 0.9em;
+        max-width: 80%; /* Don't let messages take full width */
+    }
+    .message:nth-child(odd) { /* Example for alternating, could be user-specific */
+       /* background-color: #007bff;
+        color: white;
+        margin-left: auto; /* Align to right for "own" messages - needs JS to assign class */
+    }
+    .controls { margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;}
+    .controls button, .controls label, .controls input[type="file"] {
+        margin-right: 8px;
+        margin-bottom: 10px; /* Spacing for controls */
+    }
+    nav {
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #007bff;
+        text-align: center; /* Center nav links */
+    }
+    nav a {
+        margin: 0 12px; /* Adjust spacing */
+        text-decoration: none;
+        color: #007bff;
+        font-weight: 500; /* Medium weight */
+        padding: 8px 12px;
+        border-radius: 5px;
+        transition: background-color 0.2s, color 0.2s;
+    }
+    nav a:hover, nav a.active { /* Style for active link */
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+    }
+    /* Adjustments for buttons inside list items */
+    #taskListTasker li button, #taskListVib li button {
+        margin-left: auto; /* Push buttons to the right */
+        padding: 6px 12px;
+        font-size: 0.85em;
+    }
+</style>
 </head>
 <body>
-
     <div class="container">
-        <h1>VIB Services - Summer 2025 Action List</h1>
+        <h1>VibHelper</h1>
+        <nav>
+            <a href="?view=tasker">Tasker View</a>
+            <a href="?view=vib">Vib View</a>
+        </nav>
 
-        <div class="note">
-            Remember: We'll integrate this with Cloud Firestore later for persistence and dynamic updates! For now, checkboxes will work client-side.
+        <!-- Tasker View: For creating tasks -->
+        <div id="taskerView" class="view">
+            <h2>Tasker Mode - Create Tasks</h2>
+            <input type="text" id="taskInput" placeholder="Enter a new task">
+            <button id="addTaskBtn">Add Task</button>
+            <h3>Tasks:</h3>
+            <ul id="taskListTasker">
+                <!-- Tasks will be listed here -->
+            </ul>
         </div>
 
-        <h2>📦 Nanu Nani House Stuff Online Sale</h2>
-        <ul>
-            <li>
-                <input type="checkbox" id="sell-nanu-nani-stuff">
-                <label for="sell-nanu-nani-stuff" class="task-description">
-                    Sell Nanu Nani house stuff online
-                    <ul class="sub-tasks">
-                        <li>Bike</li>
-                        <li>Tech stuff</li>
-                        <li>Indian outfits</li>
-                        <li>Sono's surround sound bar</li>
-                        <li>Anything else we don't need</li>
-                    </ul>
-                </label>
-            </li>
-            <li>
-                <input type="checkbox" id="breggs-machine">
-                <label for="breggs-machine" class="task-description">Breggs machine</label>
-            </li>
-            <li>
-                <input type="checkbox" id="take-pics-marketplace">
-                <label for="take-pics-marketplace" class="task-description">
-                    Take pictures and list items on marketplace, negotiate sales
-                    <div class="helper-info">Helper: Miss Jiya Rani Bajaj</div>
-                    <div class="sub-tasks">VIB services will get 50% of the sale</div>
-                </label>
-            </li>
-        </ul>
+        <!-- Vib View: For doing tasks -->
+        <div id="vibView" class="view">
+            <h2>Vib Mode - Do Tasks</h2>
+            <h3>Pending Tasks:</h3>
+            <ul id="taskListVib">
+                <!-- Tasks will be listed here -->
+            </ul>
+        </div>
 
-        <h2>💻 Tech Optimization & Teaching</h2>
-        <ul>
-            <li>
-                <input type="checkbox" id="optimize-nanu-computer">
-                <label for="optimize-nanu-computer" class="task-description">Optimize Nanu's computer and organize his email account</label>
-            </li>
-            <li>
-                <input type="checkbox" id="nixplay-update">
-                <label for="nixplay-update" class="task-description">
-                    Nixplay updated and make different playlists, get pics from family
-                </label>
-            </li>
-            <li>
-                <input type="checkbox" id="optimize-nanu-tv">
-                <label for="optimize-nanu-tv" class="task-description">Optimize Nanu's new TV and surround sound and teach us as well</label>
-            </li>
-        </ul>
+        <hr>
 
-        <h2>👨‍🏫 Laptop Teaching</h2>
-        <ul>
-            <li>
-                <input type="checkbox" id="set-reminders">
-                <label for="set-reminders" class="task-description">Set Reminders</label>
-            </li>
-            <li>
-                <input type="checkbox" id="sync-calendars">
-                <label for="sync-calendars" class="task-description">Sync calendars</label>
-            </li>
-        </ul>
+        <!-- Controls for both views -->
+        <div class="controls">
+            <h2>Controls</h2>
+            <button id="saveBtn">Save to .vibhelper</button>
+            <label for="loadFile">Load from .vibhelper:</label>
+            <input type="file" id="loadFile" accept=".vibhelper">
+        </div>
 
-        <h2>🌐 Connectivity & Devices</h2>
-        <ul>
-            <li>
-                <input type="checkbox" id="check-wifi-extenders">
-                <label for="check-wifi-extenders" class="task-description">Check our WiFi extenders</label>
-            </li>
-            <li>
-                <input type="checkbox" id="new-phone">
-                <label for="new-phone" class="task-description">
-                    Investigate new phone (currently 12 max, getting dropped calls)
-                </label>
-            </li>
-            <li>
-                <input type="checkbox" id="google-one-share">
-                <label for="google-one-share" class="task-description">Google One share with 5</label>
-            </li>
-        </ul>
+        <hr>
+
+        <!-- Chat -->
+        <h2>Chat</h2>
+        <div id="chatMessages" class="chat-messages">
+            <!-- Chat messages will appear here -->
+        </div>
+        <input type="text" id="chatInput" placeholder="Type a message...">
+        <button id="sendChatBtn">Send</button>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+document.addEventListener('DOMContentLoaded', () => {
+    const taskInput = document.getElementById('taskInput');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const taskListTasker = document.getElementById('taskListTasker');
+    const taskListVib = document.getElementById('taskListVib');
+    const saveBtn = document.getElementById('saveBtn');
+    const loadFileIn = document.getElementById('loadFile');
+    const taskerView = document.getElementById('taskerView');
+    const vibView = document.getElementById('vibView');
+    const chatMessagesDiv = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendChatBtn = document.getElementById('sendChatBtn');
 
-            checkboxes.forEach(checkbox => {
-                // Load state from localStorage on page load (basic persistence)
-                const savedState = localStorage.getItem(checkbox.id);
-                if (savedState === 'checked') {
-                    checkbox.checked = true;
-                    checkbox.parentElement.classList.add('completed');
-                }
+    let tasks = [];
+    let chatMessages = []; // Array to store chat messages {user: 'User', text: 'message', timestamp: Date}
 
-                checkbox.addEventListener('change', function() {
-                    if (this.checked) {
-                        this.parentElement.classList.add('completed');
-                        localStorage.setItem(this.id, 'checked'); // Save state
-                    } else {
-                        this.parentElement.classList.remove('completed');
-                        localStorage.removeItem(this.id); // Remove state
-                    }
-                });
-            });
+    // Function to save ALL data to localStorage (tasks and chat)
+    function saveData() {
+        localStorage.setItem('vibHelperTasks', JSON.stringify(tasks));
+        localStorage.setItem('vibHelperChat', JSON.stringify(chatMessages)); // Save chat
+    }
+
+    // Function to load ALL data from localStorage (tasks and chat)
+    function loadData() {
+        const savedTasks = localStorage.getItem('vibHelperTasks');
+        if (savedTasks) {
+            tasks = JSON.parse(savedTasks);
+        }
+        const savedChat = localStorage.getItem('vibHelperChat'); // Load chat
+        if (savedChat) {
+            chatMessages = JSON.parse(savedChat);
+        }
+    }
+
+    // Function to render tasks in both views
+    function renderTasks() {
+        taskListTasker.innerHTML = '';
+        taskListVib.innerHTML = '';
+
+        tasks.forEach((task, index) => {
+            // Tasker View Item
+            const taskerItem = document.createElement('li');
+            taskerItem.classList.add('task-item'); // Add base class for styling if needed
+
+            const taskTextNodeTasker = document.createElement('span');
+            taskTextNodeTasker.classList.add('task-item-text');
+            taskTextNodeTasker.textContent = task.text;
+            taskerItem.appendChild(taskTextNodeTasker);
+
+            const completeBtnTasker = document.createElement('button');
+            completeBtnTasker.textContent = task.completed ? 'Undo' : 'Complete';
+            completeBtnTasker.classList.add('secondary'); // Add secondary class
+            completeBtnTasker.style.marginLeft = '10px'; // Keep margin for spacing
+            completeBtnTasker.onclick = () => toggleTask(index);
+            taskerItem.appendChild(completeBtnTasker);
+
+            if (task.completed) { // Add completed class to li
+                taskerItem.classList.add('completed');
+            }
+            taskListTasker.appendChild(taskerItem);
+
+            // Vib View Item
+            const vibItem = document.createElement('li');
+            vibItem.classList.add('task-item'); // Add base class
+
+            const taskTextNodeVib = document.createElement('span');
+            taskTextNodeVib.classList.add('task-item-text');
+            taskTextNodeVib.textContent = task.text;
+            vibItem.appendChild(taskTextNodeVib);
+
+            const completeBtnVib = document.createElement('button');
+            completeBtnVib.textContent = task.completed ? 'Undo' : 'Check Off';
+            completeBtnVib.classList.add('secondary'); // Add secondary class
+            completeBtnVib.style.marginLeft = '10px'; // Keep margin
+            completeBtnVib.onclick = () => toggleTask(index);
+            vibItem.appendChild(completeBtnVib);
+
+            if (task.completed) { // Add completed class to li
+                vibItem.classList.add('completed');
+            }
+            taskListVib.appendChild(vibItem);
         });
-    </script>
+    }
 
+    // Function to add a new task
+    function addTask() {
+        const taskText = taskInput.value.trim();
+        if (taskText === '') {
+            alert('Please enter a task.');
+            return;
+        }
+        tasks.push({ text: taskText, completed: false });
+        taskInput.value = '';
+        saveData();
+        renderTasks();
+    }
+
+    // Function to toggle task completion
+    function toggleTask(index) {
+        if (tasks[index]) {
+            tasks[index].completed = !tasks[index].completed;
+            saveData();
+            renderTasks();
+        }
+    }
+
+    // Function to handle view switching
+    function switchView() {
+        const params = new URLSearchParams(window.location.search);
+        const currentView = params.get('view') || 'tasker'; // Default to 'tasker'
+
+        document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+        const activeLink = document.querySelector(`nav a[href="?view=${currentView}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+
+        taskerView.style.display = 'none';
+        vibView.style.display = 'none';
+
+        if (currentView === 'vib') {
+            vibView.style.display = 'block';
+            document.title = "Vib Mode - VibHelper";
+        } else { // Tasker view
+            taskerView.style.display = 'block';
+            document.title = "Tasker Mode - VibHelper";
+        }
+    }
+
+    // Function to handle saving tasks to a .vibhelper file
+    function saveTasksToFile() {
+        const dataToSave = {
+            tasks: tasks,
+            chatMessages: chatMessages // Include chat messages
+        };
+        const dataStr = JSON.stringify(dataToSave, null, 2);
+        const dataBlob = new Blob([dataStr], {type: "application/json"});
+        const url = URL.createObjectURL(dataBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'vibhelper_data.vibhelper'; // Changed filename for clarity
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Function to handle loading tasks from a .vibhelper file
+    function loadTasksFromFile(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const loadedData = JSON.parse(e.target.result);
+                    if (loadedData) {
+                        if (loadedData.tasks) {
+                            tasks = loadedData.tasks;
+                        } else {
+                            tasks = []; // Default to empty if not present
+                        }
+                        if (loadedData.chatMessages) { // Load chat messages if present
+                            chatMessages = loadedData.chatMessages;
+                        } else {
+                            chatMessages = []; // Default to empty if not present
+                        }
+                        saveData(); // Save loaded data (both tasks and chat) to localStorage
+                        renderTasks();
+                        renderChatMessages(); // Render the loaded chat messages
+                        alert('Data loaded successfully from .vibhelper file!');
+                    } else {
+                         alert('Invalid .vibhelper file format.');
+                    }
+                } catch (error) {
+                    console.error("Error parsing .vibhelper file:", error);
+                    alert('Error loading .vibhelper file. Make sure it is a valid JSON file.');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = null;
+        }
+    }
+
+    // New function to render chat messages
+    function renderChatMessages() {
+        chatMessagesDiv.innerHTML = ''; // Clear existing messages
+        chatMessages.forEach(msg => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            // For simplicity, user is not distinguished yet, but could be added to msg object
+            messageElement.textContent = `[${new Date(msg.timestamp).toLocaleTimeString()}]: ${msg.text}`;
+            chatMessagesDiv.appendChild(messageElement);
+        });
+        chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Scroll to bottom
+    }
+
+    // New function to send a chat message
+    function sendChatMessage() {
+        const text = chatInput.value.trim();
+        if (text === '') return;
+
+        chatMessages.push({
+            // user: 'CurrentUser', // Could add user identification if multiple users were possible
+            text: text,
+            timestamp: new Date().toISOString()
+        });
+        chatInput.value = '';
+        saveData(); // Save chat messages (and tasks)
+        renderChatMessages();
+    }
+
+    // Event Listeners
+    addTaskBtn.addEventListener('click', addTask);
+    taskInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addTask();
+    });
+    saveBtn.addEventListener('click', saveTasksToFile);
+    loadFileIn.addEventListener('change', loadTasksFromFile);
+    sendChatBtn.addEventListener('click', sendChatMessage);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendChatMessage();
+        }
+    });
+
+    // Initial actions
+    loadData(); // Load tasks and chat
+    renderTasks();
+    renderChatMessages(); // Render initial chat messages
+    switchView();
+});
+</script>
 </body>
 </html>
