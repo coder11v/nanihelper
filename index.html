@@ -4,73 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VibHelper</title>
-    <style>
+<style>
     * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
     }
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        background-color: #f0f2f5;
-        color: #333;
-        line-height: 1.6;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        background-color: #f4f7f9; /* Lighter, cooler background */
+        color: #333d47; /* Softer black for text */
+        line-height: 1.65;
+        font-size: 16px; /* Slightly larger base font */
     }
     .container {
-        background-color: #fff;
-        padding: 25px;
-        border-radius: 8px;
-        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-        max-width: 800px; /* Max width for the container */
-        margin: 30px auto; /* Center container */
+        background-color: #ffffff;
+        padding: 30px 40px; /* More padding */
+        border-radius: 12px; /* Softer, larger radius */
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08); /* Softer, more diffused shadow */
+        max-width: 850px;
+        margin: 40px auto;
     }
     h1, h2, h3 {
-        color: #333;
-        margin-top: 0;
-        margin-bottom: 15px;
+        color: #2c3e50; /* Darker, desaturated blue for headings */
+        margin-bottom: 20px;
+        font-weight: 600; /* Slightly bolder headings */
     }
     h1 {
         text-align: center;
-        color: #007bff;
-        margin-bottom: 25px;
-        font-size: 2.2em;
+        color: #007bff; /* Keep primary color for main title, or change to a new one like #17a2b8 (teal) */
+        margin-bottom: 30px;
+        font-size: 2.5em; /* Larger main title */
+        font-weight: 700;
     }
     h2 {
-        font-size: 1.6em;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
+        font-size: 1.75em;
+        border-bottom: 1px solid #e9ecef; /* Lighter border */
+        padding-bottom: 15px;
+        margin-bottom: 25px;
     }
-    button {
-        padding: 10px 18px;
-        margin: 5px; /* Consistent margin */
-        background-color: #007bff;
+    button, input[type="submit"] /* Style submit inputs like buttons */ {
+        padding: 12px 20px;
+        margin: 8px 5px; /* Added a bit more margin */
+        background-color: #007bff; /* Primary button color */
         color: white;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px; /* Softer radius */
         cursor: pointer;
-        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        font-size: 0.95em;
+        transition: background-color 0.2s ease-in-out, transform 0.1s ease, box-shadow 0.2s ease;
+        font-size: 1em;
+        font-weight: 500;
     }
-    button:hover {
-        background-color: #0056b3;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    button:hover, input[type="submit"]:hover {
+        background-color: #0056b3; /* Darker on hover */
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+        transform: translateY(-1px); /* Subtle lift */
     }
-    button.secondary { /* For less prominent buttons like complete/undo */
-        background-color: #6c757d;
-        padding: 6px 12px; /* Smaller padding */
-        font-size: 0.85em;
+    button.secondary {
+        background-color: #6c757d; /* Grey for secondary actions */
+        font-size: 0.9em;
+        padding: 8px 15px;
     }
     button.secondary:hover {
         background-color: #545b62;
+        box-shadow: 0 2px 8px rgba(108, 117, 125, 0.2);
     }
     input[type="text"],
     input[type="file"] {
-        width: calc(100% - 24px); /* Adjust for padding */
-        padding: 12px;
-        margin: 5px 0 15px 0;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+        width: 100%; /* Full width */
+        padding: 12px 15px; /* More padding */
+        margin-bottom: 15px; /* Consistent bottom margin */
+        border: 1px solid #ced4da; /* Standard border color */
+        border-radius: 8px; /* Softer radius */
         font-size: 1em;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
     input[type="text"]:focus {
         border-color: #007bff;
@@ -78,93 +85,131 @@
         outline: none;
     }
     input[type="file"] {
-      padding: 8px; /* Specific padding for file input */
+      background-color: #f8f9fa; /* Slight background for file input */
     }
-    ul {
+    ul#taskListTasker, ul#taskListVib { /* Added IDs for specificity */
         list-style-type: none;
         padding: 0;
+        margin-bottom: 20px; /* Space below lists */
     }
     li {
-        padding: 12px 8px;
-        border-bottom: 1px solid #f0f0f0;
+        padding: 15px 10px; /* Increased padding */
+        border-bottom: 1px solid #e9ecef; /* Lighter separator */
         display: flex;
         justify-content: space-between;
         align-items: center;
-        transition: background-color 0.1s ease;
+        transition: background-color 0.15s ease;
     }
     li:hover {
-        background-color: #f9f9f9;
+        background-color: #f8f9fa; /* Subtle hover for list items */
     }
     li:last-child {
         border-bottom: none;
     }
-    .task-item-text { /* Wrap task text in a span for better control */
+    .task-item-text {
         flex-grow: 1;
-        margin-right: 10px;
+        margin-right: 15px; /* More space before button */
+        font-size: 1.05em; /* Slightly larger task text */
     }
-    .task-item.completed .task-item-text { /* Target the span */
+    .task-item.completed .task-item-text {
         text-decoration: line-through;
-        color: #888;
+        color: #77838f; /* Softer color for completed */
+        font-style: italic;
     }
     .view {
-        display: none; /* Hidden by default */
-        padding: 20px 0;
-        margin-top:15px;
-        border-top: 2px dashed #e0e0e0;
+        display: none;
+        padding: 25px 0;
+        margin-top: 20px;
+        border-top: 1px solid #e9ecef; /* Lighter border */
     }
     .chat-messages {
-        height: 180px; /* Slightly taller */
+        height: 200px; /* Taller chat */
         overflow-y: auto;
-        border: 1px solid #e0e0e0;
-        padding: 12px;
-        margin-bottom: 12px;
+        border: 1px solid #e0e6ed;
+        padding: 15px;
+        margin-bottom: 15px;
         background-color: #fdfdfd;
-        border-radius: 5px;
+        border-radius: 8px;
     }
     .message {
-        margin-bottom: 10px;
-        padding: 8px 12px;
-        border-radius: 15px; /* Bubble like */
+        margin-bottom: 12px;
+        padding: 10px 15px;
+        border-radius: 18px; /* More rounded bubbles */
         background-color: #e9ecef;
-        font-size: 0.9em;
-        max-width: 80%; /* Don't let messages take full width */
+        color: #333d47;
+        font-size: 0.95em;
+        max-width: 85%;
+        word-wrap: break-word; /* Prevent long words from overflowing */
     }
-    .message:nth-child(odd) { /* Example for alternating, could be user-specific */
-       /* background-color: #007bff;
-        color: white;
-        margin-left: auto; /* Align to right for "own" messages - needs JS to assign class */
+    .message .timestamp { /* Style for timestamp if we add it directly */
+        font-size: 0.8em;
+        color: #6c757d;
+        display: block;
+        margin-top: 4px;
     }
-    .controls { margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;}
-    .controls button, .controls label, .controls input[type="file"] {
-        margin-right: 8px;
-        margin-bottom: 10px; /* Spacing for controls */
-    }
-    nav {
-        margin-bottom: 25px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid #007bff;
-        text-align: center; /* Center nav links */
-    }
-    nav a {
-        margin: 0 12px; /* Adjust spacing */
-        text-decoration: none;
-        color: #007bff;
-        font-weight: 500; /* Medium weight */
-        padding: 8px 12px;
-        border-radius: 5px;
-        transition: background-color 0.2s, color 0.2s;
-    }
-    nav a:hover, nav a.active { /* Style for active link */
+    /* Example for user's own message - would require JS to add a class like 'own-message'
+    .message.own-message {
         background-color: #007bff;
         color: white;
-        text-decoration: none;
+        margin-left: auto;
     }
-    /* Adjustments for buttons inside list items */
+    .message.own-message .timestamp {
+        color: #e0f0ff;
+    }
+    */
+    .controls {
+        margin-top: 25px;
+        padding-top: 25px;
+        border-top: 1px solid #e9ecef;
+        display: flex; /* Flex layout for controls */
+        flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        align-items: center;
+        gap: 10px; /* Spacing between control items */
+    }
+    .controls button, .controls label, .controls input[type="file"] {
+        margin-bottom: 0; /* Remove individual bottom margin as gap handles it */
+    }
+    nav {
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #dee2e6; /* Lighter nav border */
+        text-align: center;
+    }
+    nav a {
+        margin: 0 10px;
+        text-decoration: none;
+        color: #007bff;
+        font-weight: 500;
+        padding: 10px 18px; /* More padding for nav links */
+        border-radius: 8px;
+        transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    nav a:hover {
+        color: #0056b3;
+        background-color: #e9ecef; /* Subtle background on hover */
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    nav a.active {
+        background-color: #007bff;
+        color: white;
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+    }
+    nav a.active:hover {
+        background-color: #0056b3; /* Darken active link on hover */
+    }
+    /* Task list buttons */
     #taskListTasker li button, #taskListVib li button {
         margin-left: auto; /* Push buttons to the right */
-        padding: 6px 12px;
-        font-size: 0.85em;
+        padding: 8px 12px; /* Slightly adjusted padding */
+        font-size: 0.8em; /* Smaller font for task buttons */
     }
+
+    /* Utility class for slight top margin */
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mb-1 { margin-bottom: 0.5rem; }
+    .mb-2 { margin-bottom: 1rem; }
+
 </style>
 </head>
 <body>
@@ -233,21 +278,49 @@ document.addEventListener('DOMContentLoaded', () => {
     let tasks = [];
     let chatMessages = []; // Array to store chat messages {user: 'User', text: 'message', timestamp: Date}
 
+    // Define defaultTasks array
+    const defaultTasks = [
+        { text: "Sell Nanu Nani house stuff online (bike, tech, Indian outfits, Sono’s sound bar, unneeded items). Helper: Jiya Rani Bajaj. Vib services gets 50% of sale.", completed: false },
+        { text: "Take pictures of items for sale, post on marketplace, and negotiate sales.", completed: false },
+        { text: "Address Breggs machine.", completed: false },
+        { text: "Optimize Nanu’s computer and organize his email account.", completed: false },
+        { text: "Update Nixplay: make different playlists, get pics from family.", completed: false },
+        { text: "Optimize Nanu’s new TV and surround sound; teach usage.", completed: false },
+        { text: "Laptop teaching: Set Reminders.", completed: false },
+        { text: "Laptop teaching: Sync calendars.", completed: false },
+        { text: "Check WiFi extenders.", completed: false },
+        { text: "Investigate new phone options (current: iPhone 12 Max, dropping calls).", completed: false },
+        { text: "Set up Google One sharing with 5 people.", completed: false }
+    ];
+
     // Function to save ALL data to localStorage (tasks and chat)
     function saveData() {
         localStorage.setItem('vibHelperTasks', JSON.stringify(tasks));
-        localStorage.setItem('vibHelperChat', JSON.stringify(chatMessages)); // Save chat
+        localStorage.setItem('vibHelperChat', JSON.stringify(chatMessages));
     }
 
-    // Function to load ALL data from localStorage (tasks and chat)
+    // Modified function to load ALL data from localStorage
     function loadData() {
         const savedTasks = localStorage.getItem('vibHelperTasks');
+        const savedChat = localStorage.getItem('vibHelperChat');
+
         if (savedTasks) {
             tasks = JSON.parse(savedTasks);
+        } else {
+            // If no tasks in localStorage, load default tasks and save them
+            tasks = defaultTasks;
+            // No need to call saveData() here if we want them to appear only on first ever load.
+            // However, if we want them to repopulate if local storage is cleared (but not by user deleting all tasks),
+            // then saving them back is good. For the requirement "preserve original tasks",
+            // it seems they should appear if storage is empty.
+            // Let's save them so they stick around until explicitly deleted by user actions within the app.
+             saveData(); // This will save the default tasks to localStorage on first load.
         }
-        const savedChat = localStorage.getItem('vibHelperChat'); // Load chat
+
         if (savedChat) {
             chatMessages = JSON.parse(savedChat);
+        } else {
+            chatMessages = []; // Initialize chat if nothing in storage
         }
     }
 
