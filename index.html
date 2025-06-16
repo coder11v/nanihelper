@@ -5,109 +5,256 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIB Services - Summer 2025 Action List</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
+        :root {
+            --primary-bg-color: #1a1a2e; /* Dark blue */
+            --secondary-bg-color: #162447; /* Slightly lighter dark blue */
+            --card-bg-color: #1f4068;    /* Muted blue for cards */
+            --text-color: #e0e0e0;       /* Light grey for text */
+            --heading-color: #ffffff;    /* White for headings */
+            --accent-color: #ff6b6b;     /* Coral/pink accent */
+            --completed-color: #2ecc71;  /* Green for completed tasks */
+            --border-color: #3a3a5e;     /* Darker border color */
+            --hover-bg-color: #243b55;   /* Darker blue on hover */
+            --font-main: 'Roboto', sans-serif;
+            --font-headings: 'Montserrat', sans-serif;
         }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--primary-bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+            margin: 0;
+            padding: 25px;
+            display: flex;
+            flex-direction: column; /* Allow header and container to stack */
+            align-items: center; /* Center content on the page */
+            min-height: 100vh;
+            font-size: 16px; /* Base font size */
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center logo and title */
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 850px; /* Match container width */
+        }
+
+        .header img {
+            height: 60px; /* Adjust as needed */
+            margin-right: 20px;
+            border-radius: 8px; /* Slightly rounded corners for the logo */
+        }
+
         .container {
-            background-color: #ffffff;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
+            background-color: var(--secondary-bg-color);
+            padding: 35px 45px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); /* More pronounced shadow */
+            max-width: 850px;
             width: 100%;
         }
+
         h1 {
-            color: #2c3e50;
+            font-family: var(--font-headings);
+            color: var(--heading-color);
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.2em;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 15px;
+            margin-bottom: 35px;
+            font-size: 2.5em; /* Slightly larger */
+            border-bottom: 3px solid var(--accent-color); /* Accent color border */
+            padding-bottom: 20px;
+            letter-spacing: 1px; /* Add some letter spacing */
         }
+
         h2 {
-            color: #34495e;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 1.6em;
-            border-left: 5px solid #3498db;
-            padding-left: 10px;
+            font-family: var(--font-headings);
+            color: var(--heading-color);
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-size: 1.8em; /* Slightly larger */
+            border-left: 5px solid var(--accent-color);
+            padding-left: 15px;
+            background-color: rgba(255, 107, 107, 0.05); /* Subtle background for h2 */
+            border-radius: 0 5px 5px 0;
         }
+
         ul {
             list-style-type: none;
             padding: 0;
         }
+
         li {
-            background-color: #ecf0f1;
-            margin-bottom: 10px;
-            padding: 15px 20px;
-            border-radius: 8px;
+            background-color: var(--card-bg-color);
+            margin-bottom: 12px;
+            padding: 18px 25px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
-            transition: background-color 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.25s ease, transform 0.2s ease;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color); /* Subtle border */
         }
+
         li:hover {
-            background-color: #dde1e2;
+            background-color: var(--hover-bg-color);
+            transform: translateY(-3px); /* Slight lift effect */
         }
+
         li.completed {
-            background-color: #d4edda;
+            background-color: var(--completed-color); /* Use a distinct color from the palette */
             text-decoration: line-through;
-            color: #555;
-            transition: background-color 0.3s ease;
+            color: #1a1a2e; /* Darker text for completed items for contrast */
+            transition: background-color 0.25s ease;
         }
+
+        li.completed:hover {
+            background-color: #27ae60; /* Slightly darker green on hover */
+        }
+
         input[type="checkbox"] {
-            margin-right: 15px;
-            min-width: 20px; /* Ensure checkbox size */
-            min-height: 20px;
+            margin-right: 18px;
+            min-width: 22px;
+            min-height: 22px;
             cursor: pointer;
-            accent-color: #27ae60; /* Green for checked state */
+            accent-color: var(--accent-color); /* Use accent color for checkbox */
+            border: 2px solid var(--text-color); /* Border for unchecked state */
+            border-radius: 4px;
+            appearance: none; /* Custom styling */
+            position: relative; /* For custom checkmark */
+            transition: background-color 0.2s ease, border-color 0.2s ease;
         }
+
+        input[type="checkbox"]:checked {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        /* Custom checkmark */
+        input[type="checkbox"]:checked::before {
+            content: '✔'; /* Checkmark symbol */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--primary-bg-color); /* Dark color for checkmark */
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        input[type="checkbox"]:hover {
+            border-color: var(--accent-color);
+        }
+
+
         .task-description {
             flex-grow: 1;
+            font-size: 1.05em; /* Slightly larger task text */
         }
+
         .sub-tasks {
-            margin-top: 10px;
-            padding-left: 30px;
-            font-size: 0.9em;
-            color: #555;
+            margin-top: 12px;
+            padding-left: 35px; /* Indent sub-tasks more */
+            font-size: 0.95em;
+            color: var(--text-color); /* Lighter text for sub-tasks */
+            opacity: 0.85; /* Slightly transparent */
         }
+
         .sub-tasks li {
-            background-color: #f8f9fa;
-            padding: 8px 15px;
-            border-radius: 5px;
-            margin-top: 5px;
-            margin-bottom: 5px;
+            background-color: rgba(0,0,0,0.15); /* Darker, more subtle sub-tasks */
+            padding: 10px 18px;
+            border-radius: 6px;
+            margin-top: 8px;
+            margin-bottom: 8px;
             box-shadow: none;
-            border: 1px solid #eee;
+            border: 1px solid var(--border-color);
         }
+
+        .sub-tasks li:hover {
+            background-color: rgba(0,0,0,0.25);
+            transform: none; /* No lift for sub-tasks */
+        }
+
         .note {
-            background-color: #fef9e7;
-            border-left: 5px solid #f39c12;
-            padding: 15px;
-            margin-top: 25px;
+            background-color: rgba(255, 107, 107, 0.1); /* Accent color with low opacity */
+            border-left: 5px solid var(--accent-color);
+            padding: 18px 22px;
+            margin-top: 0; /* Note is now part of the main flow under header */
+            margin-bottom: 30px; /* Space below note */
             border-radius: 8px;
             font-style: italic;
-            color: #7d6608;
+            color: var(--accent-color); /* Brighter text for note */
+            font-size: 0.95em;
         }
+
         .helper-info {
             font-weight: bold;
-            color: #2980b9;
+            color: var(--accent-color); /* Use accent color for helper info */
+            font-size: 0.9em;
+            margin-top: 8px;
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .container {
+                padding: 25px 30px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+            li {
+                padding: 15px 20px;
+            }
+            input[type="checkbox"] {
+                min-width: 20px;
+                min-height: 20px;
+            }
+            .header img {
+                height: 50px;
+                margin-right: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            h2 {
+                font-size: 1.3em;
+                padding-left: 10px;
+            }
+            .task-description {
+                font-size: 1em;
+            }
+            .sub-tasks {
+                padding-left: 25px;
+            }
+             .header {
+                flex-direction: column; /* Stack logo and title on small screens */
+                text-align: center;
+            }
+            .header img {
+                margin-right: 0;
+                margin-bottom: 10px; /* Space between logo and title */
+            }
+        }
+
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
+    <header class="header">
+        <img src="https://raw.githubusercontent.com/coder11v/images/refs/heads/main/generated-icon.png" alt="VIB Services Logo">
+    </header>
     <div class="container">
         <h1>VIB Services - Summer 2025 Action List</h1>
-
         <div class="note">
             Remember: We'll integrate this with Cloud Firestore later for persistence and dynamic updates! For now, checkboxes will work client-side.
         </div>
