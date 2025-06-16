@@ -3,364 +3,544 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIB Services - Summer 2025 Action List</title>
-    <style>
-        :root {
-            --primary-bg-color: #1a1a2e; /* Dark blue */
-            --secondary-bg-color: #162447; /* Slightly lighter dark blue */
-            --card-bg-color: #1f4068;    /* Muted blue for cards */
-            --text-color: #e0e0e0;       /* Light grey for text */
-            --heading-color: #ffffff;    /* White for headings */
-            --accent-color: #ff6b6b;     /* Coral/pink accent */
-            --completed-color: #2ecc71;  /* Green for completed tasks */
-            --border-color: #3a3a5e;     /* Darker border color */
-            --hover-bg-color: #243b55;   /* Darker blue on hover */
-            --font-main: 'Roboto', sans-serif;
-            --font-headings: 'Montserrat', sans-serif;
-        }
-
-        body {
-            font-family: var(--font-main);
-            background-color: var(--primary-bg-color);
-            color: var(--text-color);
-            line-height: 1.8;
-            margin: 0;
-            padding: 25px;
-            display: flex;
-            flex-direction: column; /* Allow header and container to stack */
-            align-items: center; /* Center content on the page */
-            min-height: 100vh;
-            font-size: 16px; /* Base font size */
-        }
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: center; /* Center logo and title */
-            margin-bottom: 30px;
-            width: 100%;
-            max-width: 850px; /* Match container width */
-        }
-
-        .header img {
-            height: 60px; /* Adjust as needed */
-            margin-right: 20px;
-            border-radius: 8px; /* Slightly rounded corners for the logo */
-        }
-
-        .container {
-            background-color: var(--secondary-bg-color);
-            padding: 35px 45px;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); /* More pronounced shadow */
-            max-width: 850px;
-            width: 100%;
-        }
-
-        h1 {
-            font-family: var(--font-headings);
-            color: var(--heading-color);
-            text-align: center;
-            margin-bottom: 35px;
-            font-size: 2.5em; /* Slightly larger */
-            border-bottom: 3px solid var(--accent-color); /* Accent color border */
-            padding-bottom: 20px;
-            letter-spacing: 1px; /* Add some letter spacing */
-        }
-
-        h2 {
-            font-family: var(--font-headings);
-            color: var(--heading-color);
-            margin-top: 35px;
-            margin-bottom: 20px;
-            font-size: 1.8em; /* Slightly larger */
-            border-left: 5px solid var(--accent-color);
-            padding-left: 15px;
-            background-color: rgba(255, 107, 107, 0.05); /* Subtle background for h2 */
-            border-radius: 0 5px 5px 0;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            background-color: var(--card-bg-color);
-            margin-bottom: 12px;
-            padding: 18px 25px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            transition: background-color 0.25s ease, transform 0.2s ease;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border-color); /* Subtle border */
-        }
-
-        li:hover {
-            background-color: var(--hover-bg-color);
-            transform: translateY(-3px); /* Slight lift effect */
-        }
-
-        li.completed {
-            background-color: var(--completed-color); /* Use a distinct color from the palette */
-            text-decoration: line-through;
-            color: #1a1a2e; /* Darker text for completed items for contrast */
-            transition: background-color 0.25s ease;
-        }
-
-        li.completed:hover {
-            background-color: #27ae60; /* Slightly darker green on hover */
-        }
-
-        input[type="checkbox"] {
-            margin-right: 18px;
-            min-width: 22px;
-            min-height: 22px;
-            cursor: pointer;
-            accent-color: var(--accent-color); /* Use accent color for checkbox */
-            border: 2px solid var(--text-color); /* Border for unchecked state */
-            border-radius: 4px;
-            appearance: none; /* Custom styling */
-            position: relative; /* For custom checkmark */
-            transition: background-color 0.2s ease, border-color 0.2s ease;
-        }
-
-        input[type="checkbox"]:checked {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-
-        /* Custom checkmark */
-        input[type="checkbox"]:checked::before {
-            content: '✔'; /* Checkmark symbol */
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: var(--primary-bg-color); /* Dark color for checkmark */
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        input[type="checkbox"]:hover {
-            border-color: var(--accent-color);
-        }
-
-
-        .task-description {
-            flex-grow: 1;
-            font-size: 1.05em; /* Slightly larger task text */
-        }
-
-        .sub-tasks {
-            margin-top: 12px;
-            padding-left: 35px; /* Indent sub-tasks more */
-            font-size: 0.95em;
-            color: var(--text-color); /* Lighter text for sub-tasks */
-            opacity: 0.85; /* Slightly transparent */
-        }
-
-        .sub-tasks li {
-            background-color: rgba(0,0,0,0.15); /* Darker, more subtle sub-tasks */
-            padding: 10px 18px;
-            border-radius: 6px;
-            margin-top: 8px;
-            margin-bottom: 8px;
-            box-shadow: none;
-            border: 1px solid var(--border-color);
-        }
-
-        .sub-tasks li:hover {
-            background-color: rgba(0,0,0,0.25);
-            transform: none; /* No lift for sub-tasks */
-        }
-
-        .note {
-            background-color: rgba(255, 107, 107, 0.1); /* Accent color with low opacity */
-            border-left: 5px solid var(--accent-color);
-            padding: 18px 22px;
-            margin-top: 0; /* Note is now part of the main flow under header */
-            margin-bottom: 30px; /* Space below note */
-            border-radius: 8px;
-            font-style: italic;
-            color: var(--accent-color); /* Brighter text for note */
-            font-size: 0.95em;
-        }
-
-        .helper-info {
-            font-weight: bold;
-            color: var(--accent-color); /* Use accent color for helper info */
-            font-size: 0.9em;
-            margin-top: 8px;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-            .container {
-                padding: 25px 30px;
-            }
-            h1 {
-                font-size: 2em;
-            }
-            h2 {
-                font-size: 1.5em;
-            }
-            li {
-                padding: 15px 20px;
-            }
-            input[type="checkbox"] {
-                min-width: 20px;
-                min-height: 20px;
-            }
-            .header img {
-                height: 50px;
-                margin-right: 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.8em;
-            }
-            h2 {
-                font-size: 1.3em;
-                padding-left: 10px;
-            }
-            .task-description {
-                font-size: 1em;
-            }
-            .sub-tasks {
-                padding-left: 25px;
-            }
-             .header {
-                flex-direction: column; /* Stack logo and title on small screens */
-                text-align: center;
-            }
-            .header img {
-                margin-right: 0;
-                margin-bottom: 10px; /* Space between logo and title */
-            }
-        }
-
-    </style>
+    <title>Nanu and Nani Tasks</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary-bg-color: #1a1a2e;
+        --secondary-bg-color: #162447;
+        --card-bg-color: #1f4068;
+        --text-color: #e0e0e0;
+        --heading-color: #ffffff;
+        --accent-color: #ff6b6b;
+        --completed-color: #2ecc71;
+        --border-color: #3a3a5e;
+        --hover-bg-color: #243b55;
+        --font-main: 'Roboto', sans-serif;
+        --font-headings: 'Montserrat', sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    body {
+        font-family: var(--font-main);
+        background-color: var(--primary-bg-color);
+        color: var(--text-color);
+        line-height: 1.7;
+        font-size: 16px;
+        margin: 0;
+        padding: 20px;
+    }
+    .container {
+        background-color: var(--secondary-bg-color);
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+        max-width: 900px;
+        margin: 30px auto;
+        border: 1px solid var(--border-color);
+    }
+    .logo-container {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    .logo-container img {
+        height: 80px;
+        border-radius: 8px;
+    }
+    h1, h2, h3 {
+        font-family: var(--font-headings);
+        color: var(--heading-color);
+        margin-bottom: 25px;
+        font-weight: 700;
+    }
+    h1 {
+        text-align: center;
+        color: var(--heading-color);
+        font-size: 2.6em;
+        border-bottom: 3px solid var(--accent-color);
+        padding-bottom: 20px;
+        letter-spacing: 0.5px;
+    }
+    h2 {
+        font-size: 1.9em;
+        border-bottom: none;
+        border-left: 5px solid var(--accent-color);
+        padding-left: 15px;
+        margin-top: 30px;
+        background-color: rgba(255, 107, 107, 0.05);
+        border-radius: 0 5px 5px 0;
+    }
+    h3 {
+        font-size: 1.4em;
+        color: var(--accent-color);
+        margin-top: 25px;
+    }
+    button, input[type="submit"] {
+        padding: 12px 22px;
+        margin: 10px 5px;
+        background-color: var(--accent-color);
+        color: var(--heading-color);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+        font-size: 1em;
+        font-weight: 600;
+        font-family: var(--font-headings);
+    }
+    button:hover, input[type="submit"]:hover {
+        background-color: #ff4747;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        transform: translateY(-2px);
+    }
+    button.secondary {
+        background-color: var(--card-bg-color);
+        color: var(--text-color);
+        font-size: 0.9em;
+        padding: 10px 18px;
+    }
+    button.secondary:hover {
+        background-color: var(--hover-bg-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    input[type="text"], input[type="file"] {
+        width: 100%;
+        padding: 14px 18px;
+        margin-bottom: 18px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 1em;
+        background-color: var(--primary-bg-color);
+        color: var(--text-color);
+        font-family: var(--font-main);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    input[type="text"]::placeholder {
+        color: #8a8a9e;
+    }
+    input[type="text"]:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
+        outline: none;
+    }
+    input[type="file"] {
+        background-color: var(--card-bg-color);
+    }
+    label[for="loadFile"] {
+        color: var(--text-color);
+        font-family: var(--font-main);
+        margin-right: 10px;
+    }
+    ul#taskListTasker, ul#taskListVib {
+        list-style-type: none;
+        padding: 0;
+        margin-bottom: 25px;
+    }
+    li.task-item {
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.15s ease;
+        background-color: var(--card-bg-color);
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+    li.task-item:hover {
+        background-color: var(--hover-bg-color);
+    }
+    li.task-item:last-child {
+        border-bottom: none;
+    }
+    .task-item-text {
+        flex-grow: 1;
+        margin-right: 15px;
+        font-size: 1.05em;
+        color: var(--text-color);
+    }
+    .task-item.completed .task-item-text {
+        text-decoration: line-through;
+        color: var(--completed-color);
+        font-style: italic;
+        opacity: 0.7;
+    }
+    #taskListTasker li button, #taskListVib li button {
+         margin-left: auto;
+         padding: 8px 12px;
+         font-size: 0.85em;
+         background-color: var(--primary-bg-color);
+         color: var(--accent-color);
+         border: 1px solid var(--accent-color);
+    }
+    #taskListTasker li button:hover, #taskListVib li button:hover {
+         background-color: var(--accent-color);
+         color: var(--primary-bg-color);
+    }
+    .view {
+        display: none;
+        padding: 25px 0;
+        margin-top: 20px;
+        border-top: 1px solid var(--border-color);
+    }
+    .chat-messages {
+        height: 250px;
+        overflow-y: auto;
+        border: 1px solid var(--border-color);
+        padding: 18px;
+        margin-bottom: 18px;
+        background-color: var(--primary-bg-color);
+        border-radius: 8px;
+        color: var(--text-color);
+    }
+    .message {
+        margin-bottom: 14px;
+        padding: 12px 18px;
+        border-radius: 20px;
+        background-color: var(--card-bg-color);
+        color: var(--text-color);
+        font-size: 0.95em;
+        max-width: 85%;
+        word-wrap: break-word;
+        line-height: 1.5;
+    }
+    .controls {
+        margin-top: 30px;
+        padding-top: 30px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 15px;
+    }
+    nav {
+        margin-bottom: 35px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
+        text-align: center;
+    }
+    nav a {
+        margin: 0 12px;
+        text-decoration: none;
+        color: var(--accent-color);
+        font-weight: 600;
+        font-family: var(--font-headings);
+        padding: 12px 20px;
+        border-radius: 8px;
+        transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    nav a:hover {
+        color: var(--primary-bg-color);
+        background-color: var(--accent-color);
+        box-shadow: 0 2px 10px rgba(255, 107, 107, 0.25);
+    }
+    nav a.active {
+        background-color: var(--accent-color);
+        color: var(--primary-bg-color);
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    }
+    nav a.active:hover {
+        background-color: #ff4747;
+    }
+    hr {
+        border: none;
+        border-top: 1px solid var(--border-color);
+        margin: 30px 0;
+    }
+
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mb-1 { margin-bottom: 0.5rem; }
+    .mb-2 { margin-bottom: 1rem; }
+
+</style>
 </head>
 <body>
-    <header class="header">
-        <img src="https://raw.githubusercontent.com/coder11v/images/refs/heads/main/generated-icon.png" alt="VIB Services Logo">
-    </header>
     <div class="container">
-        <h1>VIB Services - Summer 2025 Action List</h1>
-        <div class="note">
-            Remember: We'll integrate this with Cloud Firestore later for persistence and dynamic updates! For now, checkboxes will work client-side.
+        <div class="logo-container">
+            <img src="https://raw.githubusercontent.com/coder11v/images/refs/heads/main/generated-icon.png" alt="VIB Logo">
+        </div>
+        <h1>Nanu and Nani Tasks</h1>
+        <nav>
+            <a href="?view=tasker">Nanu/Nani View</a>
+            <a href="?view=vib">Vib View</a>
+        </nav>
+
+        <div id="taskerView" class="view">
+            <h2>Nanu/Nani Mode - Create Tasks</h2>
+            <input type="text" id="taskInput" placeholder="Enter a new task">
+            <button id="addTaskBtn">Add Task</button>
+            <h3>Tasks:</h3>
+            <ul id="taskListTasker">
+            </ul>
         </div>
 
-        <h2>📦 Nanu Nani House Stuff Online Sale</h2>
-        <ul>
-            <li>
-                <input type="checkbox" id="sell-nanu-nani-stuff">
-                <label for="sell-nanu-nani-stuff" class="task-description">
-                    Sell Nanu Nani house stuff online
-                    <ul class="sub-tasks">
-                        <li>Bike</li>
-                        <li>Tech stuff</li>
-                        <li>Indian outfits</li>
-                        <li>Sono's surround sound bar</li>
-                        <li>Anything else we don't need</li>
-                    </ul>
-                </label>
-            </li>
-            <li>
-                <input type="checkbox" id="breggs-machine">
-                <label for="breggs-machine" class="task-description">Breggs machine</label>
-            </li>
-            <li>
-                <input type="checkbox" id="take-pics-marketplace">
-                <label for="take-pics-marketplace" class="task-description">
-                    Take pictures and list items on marketplace, negotiate sales
-                    <div class="helper-info">Helper: Miss Jiya Rani Bajaj</div>
-                    <div class="sub-tasks">VIB services will get 50% of the sale</div>
-                </label>
-            </li>
-        </ul>
+        <div id="vibView" class="view">
+            <h2>Vib Mode - Do Tasks</h2>
+            <h3>Pending Tasks:</h3>
+            <ul id="taskListVib">
+            </ul>
+        </div>
 
-        <h2>💻 Tech Optimization & Teaching</h2>
-        <ul>
-            <li>
-                <input type="checkbox" id="optimize-nanu-computer">
-                <label for="optimize-nanu-computer" class="task-description">Optimize Nanu's computer and organize his email account</label>
-            </li>
-            <li>
-                <input type="checkbox" id="nixplay-update">
-                <label for="nixplay-update" class="task-description">
-                    Nixplay updated and make different playlists, get pics from family
-                </label>
-            </li>
-            <li>
-                <input type="checkbox" id="optimize-nanu-tv">
-                <label for="optimize-nanu-tv" class="task-description">Optimize Nanu's new TV and surround sound and teach us as well</label>
-            </li>
-        </ul>
+        <hr>
 
-        <h2>👨‍🏫 Laptop Teaching</h2>
-        <ul>
-            <li>
-                <input type="checkbox" id="set-reminders">
-                <label for="set-reminders" class="task-description">Set Reminders</label>
-            </li>
-            <li>
-                <input type="checkbox" id="sync-calendars">
-                <label for="sync-calendars" class="task-description">Sync calendars</label>
-            </li>
-        </ul>
+        <div class="controls">
+            <h2>Controls</h2>
+            <button id="saveBtn">Save to .vibhelper</button>
+            <label for="loadFile">Load from .vibhelper:</label>
+            <input type="file" id="loadFile" accept=".vibhelper">
+        </div>
 
-        <h2>🌐 Connectivity & Devices</h2>
-        <ul>
-            <li>
-                <input type="checkbox" id="check-wifi-extenders">
-                <label for="check-wifi-extenders" class="task-description">Check our WiFi extenders</label>
-            </li>
-            <li>
-                <input type="checkbox" id="new-phone">
-                <label for="new-phone" class="task-description">
-                    Investigate new phone (currently 12 max, getting dropped calls)
-                </label>
-            </li>
-            <li>
-                <input type="checkbox" id="google-one-share">
-                <label for="google-one-share" class="task-description">Google One share with 5</label>
-            </li>
-        </ul>
+        <hr>
+
+        <h2>Chat</h2>
+        <div id="chatMessages" class="chat-messages">
+        </div>
+        <input type="text" id="chatInput" placeholder="Type a message...">
+        <button id="sendChatBtn">Send</button>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+document.addEventListener('DOMContentLoaded', () => {
+    const taskInput = document.getElementById('taskInput');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const taskListTasker = document.getElementById('taskListTasker');
+    const taskListVib = document.getElementById('taskListVib');
+    const saveBtn = document.getElementById('saveBtn');
+    const loadFileIn = document.getElementById('loadFile');
+    const taskerView = document.getElementById('taskerView');
+    const vibView = document.getElementById('vibView');
+    const chatMessagesDiv = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendChatBtn = document.getElementById('sendChatBtn');
 
-            checkboxes.forEach(checkbox => {
-                // Load state from localStorage on page load (basic persistence)
-                const savedState = localStorage.getItem(checkbox.id);
-                if (savedState === 'checked') {
-                    checkbox.checked = true;
-                    checkbox.parentElement.classList.add('completed');
-                }
+    let tasks = [];
+    let chatMessages = [];
 
-                checkbox.addEventListener('change', function() {
-                    if (this.checked) {
-                        this.parentElement.classList.add('completed');
-                        localStorage.setItem(this.id, 'checked'); // Save state
-                    } else {
-                        this.parentElement.classList.remove('completed');
-                        localStorage.removeItem(this.id); // Remove state
-                    }
-                });
-            });
+    const defaultTasks = [
+        { text: "Sell Nanu Nani house stuff online (bike, tech, Indian outfits, Sono’s sound bar, unneeded items). Helper: Jiya Rani Bajaj. Vib services gets 50% of sale.", completed: false },
+        { text: "Take pictures of items for sale, post on marketplace, and negotiate sales.", completed: false },
+        { text: "Address Breggs machine.", completed: false },
+        { text: "Optimize Nanu’s computer and organize his email account.", completed: false },
+        { text: "Update Nixplay: make different playlists, get pics from family.", completed: false },
+        { text: "Optimize Nanu’s new TV and surround sound; teach usage.", completed: false },
+        { text: "Laptop teaching: Set Reminders.", completed: false },
+        { text: "Laptop teaching: Sync calendars.", completed: false },
+        { text: "Check WiFi extenders.", completed: false },
+        { text: "Investigate new phone options (current: iPhone 12 Max, dropping calls).", completed: false },
+        { text: "Set up Google One sharing with 5 people.", completed: false }
+    ];
+
+    function saveData() {
+        localStorage.setItem('vibHelperTasks', JSON.stringify(tasks));
+        localStorage.setItem('vibHelperChat', JSON.stringify(chatMessages));
+    }
+
+    function loadData() {
+        const savedTasks = localStorage.getItem('vibHelperTasks');
+        const savedChat = localStorage.getItem('vibHelperChat');
+
+        if (savedTasks) {
+            tasks = JSON.parse(savedTasks);
+        } else {
+            tasks = defaultTasks;
+            saveData();
+        }
+
+        if (savedChat) {
+            chatMessages = JSON.parse(savedChat);
+        } else {
+            chatMessages = [];
+        }
+    }
+
+    function renderTasks() {
+        taskListTasker.innerHTML = '';
+        taskListVib.innerHTML = '';
+
+        tasks.forEach((task, index) => {
+            const taskerItem = document.createElement('li');
+            taskerItem.classList.add('task-item');
+
+            const taskTextNodeTasker = document.createElement('span');
+            taskTextNodeTasker.classList.add('task-item-text');
+            taskTextNodeTasker.textContent = task.text;
+            taskerItem.appendChild(taskTextNodeTasker);
+
+            const completeBtnTasker = document.createElement('button');
+            completeBtnTasker.textContent = task.completed ? 'Undo' : 'Complete';
+            completeBtnTasker.classList.add('secondary');
+            completeBtnTasker.style.marginLeft = '10px';
+            completeBtnTasker.onclick = () => toggleTask(index);
+            taskerItem.appendChild(completeBtnTasker);
+
+            if (task.completed) {
+                taskerItem.classList.add('completed');
+            }
+            taskListTasker.appendChild(taskerItem);
+
+            const vibItem = document.createElement('li');
+            vibItem.classList.add('task-item');
+
+            const taskTextNodeVib = document.createElement('span');
+            taskTextNodeVib.classList.add('task-item-text');
+            taskTextNodeVib.textContent = task.text;
+            vibItem.appendChild(taskTextNodeVib);
+
+            const completeBtnVib = document.createElement('button');
+            completeBtnVib.textContent = task.completed ? 'Undo' : 'Check Off';
+            completeBtnVib.classList.add('secondary');
+            completeBtnVib.style.marginLeft = '10px';
+            completeBtnVib.onclick = () => toggleTask(index);
+            vibItem.appendChild(completeBtnVib);
+
+            if (task.completed) {
+                vibItem.classList.add('completed');
+            }
+            taskListVib.appendChild(vibItem);
         });
-    </script>
+    }
 
+    function addTask() {
+        const taskText = taskInput.value.trim();
+        if (taskText === '') {
+            alert('Please enter a task.');
+            return;
+        }
+        tasks.push({ text: taskText, completed: false });
+        taskInput.value = '';
+        saveData();
+        renderTasks();
+    }
+
+    function toggleTask(index) {
+        if (tasks[index]) {
+            tasks[index].completed = !tasks[index].completed;
+            saveData();
+            renderTasks();
+        }
+    }
+
+    function switchView() {
+        const params = new URLSearchParams(window.location.search);
+        const currentView = params.get('view') || 'tasker';
+
+        document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+        const activeLink = document.querySelector(`nav a[href="?view=${currentView}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+
+        taskerView.style.display = 'none';
+        vibView.style.display = 'none';
+
+        if (currentView === 'vib') {
+            vibView.style.display = 'block';
+            document.title = "Vib Mode - VibHelper";
+        } else {
+            taskerView.style.display = 'block';
+            document.title = "Tasker Mode - VibHelper";
+        }
+    }
+
+    function saveTasksToFile() {
+        const dataToSave = {
+            tasks: tasks,
+            chatMessages: chatMessages
+        };
+        const dataStr = JSON.stringify(dataToSave, null, 2);
+        const dataBlob = new Blob([dataStr], {type: "application/json"});
+        const url = URL.createObjectURL(dataBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'vibhelper_data.vibhelper';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function loadTasksFromFile(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const loadedData = JSON.parse(e.target.result);
+                    if (loadedData) {
+                        if (loadedData.tasks) {
+                            tasks = loadedData.tasks;
+                        } else {
+                            tasks = [];
+                        }
+                        if (loadedData.chatMessages) {
+                            chatMessages = loadedData.chatMessages;
+                        } else {
+                            chatMessages = [];
+                        }
+                        saveData();
+                        renderTasks();
+                        renderChatMessages();
+                        alert('Data loaded successfully from .vibhelper file!');
+                    } else {
+                         alert('Invalid .vibhelper file format.');
+                    }
+                } catch (error) {
+                    console.error("Error parsing .vibhelper file:", error);
+                    alert('Error loading .vibhelper file. Make sure it is a valid JSON file.');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = null;
+        }
+    }
+
+    function renderChatMessages() {
+        chatMessagesDiv.innerHTML = '';
+        chatMessages.forEach(msg => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.textContent = `[${new Date(msg.timestamp).toLocaleTimeString()}]: ${msg.text}`;
+            chatMessagesDiv.appendChild(messageElement);
+        });
+        chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+    }
+
+    function sendChatMessage() {
+        const text = chatInput.value.trim();
+        if (text === '') return;
+
+        chatMessages.push({
+            text: text,
+            timestamp: new Date().toISOString()
+        });
+        chatInput.value = '';
+        saveData();
+        renderChatMessages();
+    }
+
+    addTaskBtn.addEventListener('click', addTask);
+    taskInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addTask();
+    });
+    saveBtn.addEventListener('click', saveTasksToFile);
+    loadFileIn.addEventListener('change', loadTasksFromFile);
+    sendChatBtn.addEventListener('click', sendChatMessage);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendChatMessage();
+        }
+    });
+
+    loadData();
+    renderTasks();
+    renderChatMessages();
+    switchView();
+});
+</script>
 </body>
 </html>
