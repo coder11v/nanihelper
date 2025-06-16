@@ -324,6 +324,7 @@
         <nav>
             <a href="?view=tasker">Nanu/Nani View</a>
             <a href="?view=vib">Vib View</a>
+            <a href="?view=jrb">JRB View</a>
         </nav>
 
         <div id="taskerView" class="view">
@@ -339,6 +340,13 @@
             <h2>Vib Mode - Do Tasks</h2>
             <h3>Pending Tasks:</h3>
             <ul id="taskListVib">
+            </ul>
+        </div>
+
+        <div id="jrbView" class="view">
+            <h2>JRB Mode - Do Tasks</h2>
+            <h3>Pending Tasks for JRB:</h3>
+            <ul id="taskListJrb">
             </ul>
         </div>
 
@@ -373,8 +381,10 @@ document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLo
     const addTaskBtn = document.getElementById('addTaskBtn');
     const taskListTasker = document.getElementById('taskListTasker');
     const taskListVib = document.getElementById('taskListVib');
+    const taskListJrb = document.getElementById('taskListJrb'); // Added for JRB view
     const taskerView = document.getElementById('taskerView');
     const vibView = document.getElementById('vibView');
+    const jrbView = document.getElementById('jrbView'); // Added for JRB view
     const chatMessagesDiv = document.getElementById('chatMessages');
     const chatInput = document.getElementById('chatInput');
     const sendChatBtn = document.getElementById('sendChatBtn');
@@ -451,6 +461,9 @@ document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLo
     function renderTasks() {
         taskListTasker.innerHTML = '';
         taskListVib.innerHTML = '';
+        if (taskListJrb) { // Check if JRB elements exist
+            taskListJrb.innerHTML = '';
+        }
 
         tasks.forEach((task, index) => {
             const taskerItem = document.createElement('li');
@@ -527,6 +540,20 @@ document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLo
             addSubtaskBtnVib.onclick = promptAndAddSubtask;
             vibItem.appendChild(addSubtaskBtnVib);
 
+            // Delegate to JRB Button for Vib
+            const delegateBtnVib = document.createElement('button');
+            delegateBtnVib.classList.add('secondary', 'delegate-jrb-btn'); // Added 'delegate-jrb-btn' for potential specific styling
+            delegateBtnVib.style.marginLeft = '8px'; // Add some spacing
+
+            if (task.jrbTaskType === 'delegatedByViB_JB' || task.jrbTaskType === 'assignedByNanuNani_JRB') {
+                delegateBtnVib.textContent = 'Delegated to JRB';
+                delegateBtnVib.disabled = true;
+            } else {
+                delegateBtnVib.textContent = 'Delegate to JRB (JB)';
+                delegateBtnVib.onclick = () => delegateTaskToJRB(task.id);
+            }
+            vibItem.appendChild(delegateBtnVib);
+
             if (task.completed) {
                 vibItem.classList.add('completed');
             }
@@ -562,7 +589,86 @@ document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLo
                 vibItem.appendChild(subtaskListVib);
             }
             taskListVib.appendChild(vibItem);
+
+            // JRB View Item - Similar to Vib View, but for taskListJrb
+            if (taskListJrb && (task.jrbTaskType === 'delegatedByViB_JB' || task.jrbTaskType === 'assignedByNanuNani_JRB')) { // Check if JRB elements exist and task is for JRB
+                const jrbItem = document.createElement('li');
+                jrbItem.classList.add('task-item');
+
+                const taskTextNodeJrb = document.createElement('span');
+                taskTextNodeJrb.classList.add('task-item-text');
+                taskTextNodeJrb.textContent = task.text;
+                jrbItem.appendChild(taskTextNodeJrb);
+
+                const completeBtnJrb = document.createElement('button');
+                completeBtnJrb.textContent = task.completed ? 'Undo' : 'Check Off';
+                completeBtnJrb.classList.add('secondary');
+                completeBtnJrb.style.marginLeft = '10px';
+                completeBtnJrb.onclick = () => toggleTask(index);
+                jrbItem.appendChild(completeBtnJrb);
+
+                const addSubtaskBtnJrb = document.createElement('button');
+                addSubtaskBtnJrb.className = 'add-subtask-btn';
+                addSubtaskBtnJrb.textContent = 'Add Subtask';
+                addSubtaskBtnJrb.dataset.taskId = task.id;
+                addSubtaskBtnJrb.onclick = promptAndAddSubtask;
+                jrbItem.appendChild(addSubtaskBtnJrb);
+
+                if (task.completed) {
+                    jrbItem.classList.add('completed');
+                }
+
+                // Render subtasks for JRB view
+                if (task.subtasks && task.subtasks.length > 0) {
+                    const subtaskListJrb = document.createElement('ul');
+                    subtaskListJrb.className = 'subtask-list';
+                    task.subtasks.forEach((subtask) => {
+                        const subtaskItem = document.createElement('li');
+                        subtaskItem.className = 'subtask-item';
+
+                        const subtaskCheckbox = document.createElement('input');
+                        subtaskCheckbox.type = 'checkbox';
+                        subtaskCheckbox.checked = subtask.completed;
+                        subtaskCheckbox.dataset.mainTaskId = task.id;
+                        subtaskCheckbox.dataset.subtaskId = subtask.id;
+                        subtaskCheckbox.onchange = toggleSubtaskCompletion;
+
+                        const subtaskText = document.createElement('span');
+                        subtaskText.textContent = subtask.text;
+                        if (subtask.completed) {
+                            subtaskText.classList.add('completed-subtask-text');
+                        }
+
+                        subtaskItem.appendChild(subtaskCheckbox);
+                        subtaskItem.appendChild(subtaskText);
+                        subtaskListJrb.appendChild(subtaskItem);
+                    });
+                    jrbItem.appendChild(subtaskListJrb);
+                }
+                taskListJrb.appendChild(jrbItem);
+            }
         });
+    }
+
+    async function delegateTaskToJRB(taskId) {
+        const taskRef = db.collection('tasks').doc(taskId);
+        try {
+            await taskRef.update({
+                jrbTaskType: 'delegatedByViB_JB'
+            });
+
+            // Update local tasks array
+            const taskIndex = tasks.findIndex(t => t.id === taskId);
+            if (taskIndex > -1) {
+                tasks[taskIndex].jrbTaskType = 'delegatedByViB_JB';
+            } else {
+                console.warn("Task not found in local cache after delegation, fetching fresh data might be needed or this is an error:", taskId);
+            }
+            renderTasks(); // Re-render to reflect the change
+        } catch (error) {
+            console.error("Error delegating task to JRB: ", error);
+            alert("Failed to delegate task. Please try again.");
+        }
     }
 
     async function promptAndAddSubtask(event) {
@@ -652,12 +758,33 @@ document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLo
 
 
     async function addTask() {
-        const taskText = taskInput.value.trim();
+        let taskText = taskInput.value.trim(); // Use let as taskText might be modified
         if (taskText === '') {
             alert('Please enter a task.');
             return;
         }
-        const newTask = { text: taskText, completed: false, subtasks: [] };
+
+        const jrbKeyword = '(for JRB)';
+        const isForJRB = taskText.toLowerCase().includes(jrbKeyword.toLowerCase());
+        let jrbTaskType = null;
+
+        if (isForJRB) {
+            // Remove the keyword (case-insensitive) and trim whitespace
+            const regex = new RegExp(jrbKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+            taskText = taskText.replace(regex, '').trim();
+            jrbTaskType = 'assignedByNanuNani_JRB';
+        }
+
+        const newTask = {
+            text: taskText,
+            completed: false,
+            subtasks: []
+        };
+
+        if (jrbTaskType) {
+            newTask.jrbTaskType = jrbTaskType;
+        }
+
         try {
             const docRef = await db.collection('tasks').add(newTask);
             tasks.push({ ...newTask, id: docRef.id }); // Add to local array with new ID
@@ -699,11 +826,16 @@ document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLo
 
         taskerView.style.display = 'none';
         vibView.style.display = 'none';
+        if(jrbView) jrbView.style.display = 'none'; // Hide JRB view by default
 
         if (currentView === 'vib') {
             vibView.style.display = 'block';
             document.title = "Vib Mode - VibHelper";
-        } else {
+        } else if (currentView === 'jrb') { // Added else-if for JRB view
+            if(jrbView) jrbView.style.display = 'block';
+            document.title = "JRB Mode - VibHelper";
+        }
+        else { // Default to tasker view
             taskerView.style.display = 'block';
             document.title = "Tasker Mode - VibHelper";
         }
@@ -712,22 +844,37 @@ document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLo
     function renderChatMessages() {
         chatMessagesDiv.innerHTML = '';
 
-        let currentUserIsViB = false;
+        let currentUserIsViB = false; // True if current user is ViB
+        let currentUserIsJRB = false; // True if current user is JRB
+
         if (vibView.style.display === 'block') {
             currentUserIsViB = true;
+        } else if (jrbView && jrbView.style.display === 'block') { // Check if jrbView exists and is displayed
+            currentUserIsJRB = true;
         }
+
 
         chatMessages.forEach(msg => {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
 
-            if ((currentUserIsViB && msg.author === "ViB") || (!currentUserIsViB && msg.author === "Nanu/Nani")) {
+            // Determine if the message is from the "own" perspective
+            let isOwnMessage = false;
+            if (currentUserIsViB && msg.author === "ViB") {
+                isOwnMessage = true;
+            } else if (currentUserIsJRB && msg.author === "JRB") { // JRB's own messages
+                isOwnMessage = true;
+            } else if (!currentUserIsViB && !currentUserIsJRB && msg.author === "Nanu/Nani") { // Nanu/Nani's own messages
+                isOwnMessage = true;
+            }
+
+            if (isOwnMessage) {
                 messageElement.classList.add('own-message');
             } else {
                 messageElement.classList.add('other-message');
             }
 
-            const authorPrefix = msg.author ? `${msg.author} ` : ''; // Handle potential old messages without author
+            const authorPrefix = msg.author ? `${msg.author} ` : '';
             const timestamp = msg.timestamp ? msg.timestamp.toDate().toLocaleTimeString() : 'Sending...';
             messageElement.textContent = `${authorPrefix}[${timestamp}]: ${msg.text}`;
             chatMessagesDiv.appendChild(messageElement);
@@ -742,6 +889,8 @@ document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLo
         let author = "Nanu/Nani"; // Default author
         if (vibView.style.display === 'block') {
             author = "ViB";
+        } else if (jrbView && jrbView.style.display === 'block') { // Check if jrbView exists and is displayed
+            author = "JRB";
         }
 
         const newMessage = {
