@@ -197,16 +197,33 @@
         border-radius: 8px;
         color: var(--text-color);
     }
-    .message {
+    .message { /* Existing style, can be tweaked */
         margin-bottom: 14px;
         padding: 12px 18px;
         border-radius: 20px;
-        background-color: var(--card-bg-color);
+        /* background-color: var(--card-bg-color); -- Will be overridden by own/other */
         color: var(--text-color);
         font-size: 0.95em;
-        max-width: 85%;
+        max-width: 85%; /* Keep this for bubble width */
         word-wrap: break-word;
         line-height: 1.5;
+        clear: both; /* Ensure messages don't overlap if using floats, though flex is better */
+    }
+
+    .own-message {
+        background-color: var(--accent-color); /* ViB's messages or Nanu/Nani's own */
+        color: var(--primary-bg-color); /* Dark text on accent background */
+        margin-left: auto; /* Align to the right */
+        margin-right: 10px; /* Some margin from the edge */
+        border-bottom-right-radius: 5px; /* Slightly different bubble shape */
+    }
+
+    .other-message {
+        background-color: var(--card-bg-color); /* Other user's messages */
+        color: var(--text-color);
+        margin-right: auto; /* Align to the left */
+        margin-left: 10px; /* Some margin from the edge */
+        border-bottom-left-radius: 5px; /* Slightly different bubble shape */
     }
     .controls {
         margin-top: 30px;
@@ -694,11 +711,25 @@ document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLo
 
     function renderChatMessages() {
         chatMessagesDiv.innerHTML = '';
+
+        let currentUserIsViB = false;
+        if (vibView.style.display === 'block') {
+            currentUserIsViB = true;
+        }
+
         chatMessages.forEach(msg => {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
+
+            if ((currentUserIsViB && msg.author === "ViB") || (!currentUserIsViB && msg.author === "Nanu/Nani")) {
+                messageElement.classList.add('own-message');
+            } else {
+                messageElement.classList.add('other-message');
+            }
+
+            const authorPrefix = msg.author ? `${msg.author} ` : ''; // Handle potential old messages without author
             const timestamp = msg.timestamp ? msg.timestamp.toDate().toLocaleTimeString() : 'Sending...';
-            messageElement.textContent = `[${timestamp}]: ${msg.text}`;
+            messageElement.textContent = `${authorPrefix}[${timestamp}]: ${msg.text}`;
             chatMessagesDiv.appendChild(messageElement);
         });
         chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
@@ -708,9 +739,15 @@ document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLo
         const text = chatInput.value.trim();
         if (text === '') return;
 
+        let author = "Nanu/Nani"; // Default author
+        if (vibView.style.display === 'block') {
+            author = "ViB";
+        }
+
         const newMessage = {
             text: text,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp() // Use server timestamp
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(), // Use server timestamp
+            author: author // Add the author field
         };
 
         try {
