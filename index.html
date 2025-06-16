@@ -257,6 +257,45 @@
     .mb-1 { margin-bottom: 0.5rem; }
     .mb-2 { margin-bottom: 1rem; }
 
+.subtask-list {
+    margin-left: 30px; /* Indentation */
+    padding-left: 0; /* Reset padding if ul has default */
+    list-style-type: none; /* Or 'circle', 'square' if preferred over custom styling */
+    margin-top: 8px; /* Space between main task and subtask list */
+}
+
+.subtask-item {
+    display: flex; /* Align checkbox and text */
+    align-items: center;
+    padding: 4px 0; /* Some padding for subtask items */
+    font-size: 0.9em; /* Slightly smaller font for subtasks */
+    color: var(--text-color); /* Ensure subtask text color is consistent */
+}
+
+.subtask-item input[type="checkbox"] {
+    margin-right: 10px; /* Space between checkbox and text */
+    min-width: 18px; /* Adjust size if needed */
+    min-height: 18px;
+}
+
+.completed-subtask-text {
+    text-decoration: line-through;
+    opacity: 0.7;
+    color: var(--completed-color); /* Use the main completed color */
+}
+.add-subtask-btn {
+    background-color: var(--primary-bg-color); /* Match task complete button style */
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    padding: 6px 10px;
+    font-size: 0.75em;
+    margin-left: 8px;
+    border-radius: 5px;
+}
+.add-subtask-btn:hover {
+    background-color: var(--accent-color);
+    color: var(--primary-bg-color);
+}
 </style>
 </head>
 <body>
@@ -327,17 +366,32 @@ document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLo
     let chatMessages = [];
 
     const defaultTasks = [
-        { text: "Sell Nanu Nani house stuff online (bike, tech, Indian outfits, Sono’s sound bar, unneeded items). Helper: Jiya Rani Bajaj. Vib services gets 50% of sale.", completed: false },
-        { text: "Take pictures of items for sale, post on marketplace, and negotiate sales.", completed: false },
-        { text: "Address Breggs machine.", completed: false },
-        { text: "Optimize Nanu’s computer and organize his email account.", completed: false },
-        { text: "Update Nixplay: make different playlists, get pics from family.", completed: false },
-        { text: "Optimize Nanu’s new TV and surround sound; teach usage.", completed: false },
-        { text: "Laptop teaching: Set Reminders.", completed: false },
-        { text: "Laptop teaching: Sync calendars.", completed: false },
-        { text: "Check WiFi extenders.", completed: false },
-        { text: "Investigate new phone options (current: iPhone 12 Max, dropping calls).", completed: false },
-        { text: "Set up Google One sharing with 5 people.", completed: false }
+        {
+            text: "Sell Nanu Nani house stuff online. Helper: Jiya Rani Bajaj. Vib services gets 50% of sale.",
+            completed: false,
+            subtasks: [
+                { id: 'subtask_default_1', text: "List bike for sale", completed: false },
+                { id: 'subtask_default_2', text: "List tech stuff", completed: true },
+                { id: 'subtask_default_3', text: "List Indian outfits", completed: false }
+            ]
+        },
+        { text: "Take pictures of items for sale, post on marketplace, and negotiate sales.", completed: false, subtasks: [] },
+        { text: "Address Breggs machine.", completed: false, subtasks: [] },
+        {
+            text: "Optimize Nanu’s computer and organize his email account.",
+            completed: false,
+            subtasks: [
+                { id: 'subtask_default_4', text: "Clean up desktop files", completed: false },
+                { id: 'subtask_default_5', text: "Categorize important emails", completed: false }
+            ]
+        },
+        { text: "Update Nixplay: make different playlists, get pics from family.", completed: false, subtasks: [] },
+        { text: "Optimize Nanu’s new TV and surround sound; teach usage.", completed: false, subtasks: [] },
+        { text: "Laptop teaching: Set Reminders.", completed: false, subtasks: [] },
+        { text: "Laptop teaching: Sync calendars.", completed: false, subtasks: [] },
+        { text: "Check WiFi extenders.", completed: false, subtasks: [] },
+        { text: "Investigate new phone options (current: iPhone 12 Max, dropping calls).", completed: false, subtasks: [] },
+        { text: "Set up Google One sharing with 5 people.", completed: false, subtasks: [] }
     ];
 
     async function loadData() {
@@ -394,13 +448,45 @@ document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLo
             completeBtnTasker.textContent = task.completed ? 'Undo' : 'Complete';
             completeBtnTasker.classList.add('secondary');
             completeBtnTasker.style.marginLeft = '10px';
-            completeBtnTasker.onclick = () => toggleTask(index); // Pass index, toggleTask will use tasks[index].id
+            completeBtnTasker.onclick = () => toggleTask(index);
             taskerItem.appendChild(completeBtnTasker);
+
+            const addSubtaskBtnTasker = document.createElement('button');
+            addSubtaskBtnTasker.className = 'add-subtask-btn';
+            addSubtaskBtnTasker.textContent = 'Add Subtask';
+            addSubtaskBtnTasker.dataset.taskId = task.id;
+            addSubtaskBtnTasker.onclick = promptAndAddSubtask;
+            taskerItem.appendChild(addSubtaskBtnTasker);
 
             if (task.completed) {
                 taskerItem.classList.add('completed');
             }
+            // Render subtasks for Tasker view (moved before appending taskerItem)
+            if (task.subtasks && task.subtasks.length > 0) {
+                const subtaskListTasker = document.createElement('ul');
+                subtaskListTasker.className = 'subtask-list';
+                task.subtasks.forEach((subtask, subIndex) => {
+                    const subtaskItem = document.createElement('li');
+                    subtaskItem.className = 'subtask-item';
+                    const subtaskCheckbox = document.createElement('input');
+                    subtaskCheckbox.type = 'checkbox';
+                    subtaskCheckbox.checked = subtask.completed;
+                    subtaskCheckbox.dataset.mainTaskId = task.id;
+                    subtaskCheckbox.dataset.subtaskId = subtask.id;
+                    subtaskCheckbox.onchange = toggleSubtaskCompletion;
+                    const subtaskText = document.createElement('span');
+                    subtaskText.textContent = subtask.text;
+                    if (subtask.completed) {
+                        subtaskText.classList.add('completed-subtask-text');
+                    }
+                    subtaskItem.appendChild(subtaskCheckbox);
+                    subtaskItem.appendChild(subtaskText);
+                    subtaskListTasker.appendChild(subtaskItem);
+                });
+                taskerItem.appendChild(subtaskListTasker);
+            }
             taskListTasker.appendChild(taskerItem);
+
 
             const vibItem = document.createElement('li');
             vibItem.classList.add('task-item');
@@ -414,15 +500,139 @@ document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLo
             completeBtnVib.textContent = task.completed ? 'Undo' : 'Check Off';
             completeBtnVib.classList.add('secondary');
             completeBtnVib.style.marginLeft = '10px';
-            completeBtnVib.onclick = () => toggleTask(index); // Pass index
+            completeBtnVib.onclick = () => toggleTask(index);
             vibItem.appendChild(completeBtnVib);
+
+            const addSubtaskBtnVib = document.createElement('button');
+            addSubtaskBtnVib.className = 'add-subtask-btn';
+            addSubtaskBtnVib.textContent = 'Add Subtask';
+            addSubtaskBtnVib.dataset.taskId = task.id;
+            addSubtaskBtnVib.onclick = promptAndAddSubtask;
+            vibItem.appendChild(addSubtaskBtnVib);
 
             if (task.completed) {
                 vibItem.classList.add('completed');
             }
+
+            // Render subtasks for Vib view
+            if (task.subtasks && task.subtasks.length > 0) {
+                const subtaskListVib = document.createElement('ul');
+                subtaskListVib.className = 'subtask-list';
+                // subtaskListVib.style.marginLeft = '20px'; // Basic inline style example
+                // subtaskListVib.style.listStyleType = 'circle';
+
+                task.subtasks.forEach((subtask, subIndex) => { // Assuming subIndex might be useful later
+                    const subtaskItem = document.createElement('li');
+                    subtaskItem.className = 'subtask-item';
+
+                    const subtaskCheckbox = document.createElement('input');
+                    subtaskCheckbox.type = 'checkbox';
+                    subtaskCheckbox.checked = subtask.completed;
+                    subtaskCheckbox.dataset.mainTaskId = task.id;
+                    subtaskCheckbox.dataset.subtaskId = subtask.id;
+                    subtaskCheckbox.onchange = toggleSubtaskCompletion;
+
+                    const subtaskText = document.createElement('span');
+                    subtaskText.textContent = subtask.text;
+                    if (subtask.completed) {
+                        subtaskText.classList.add('completed-subtask-text');
+                    }
+
+                    subtaskItem.appendChild(subtaskCheckbox);
+                    subtaskItem.appendChild(subtaskText);
+                    subtaskListVib.appendChild(subtaskItem);
+                });
+                vibItem.appendChild(subtaskListVib);
+            }
             taskListVib.appendChild(vibItem);
         });
     }
+
+    async function promptAndAddSubtask(event) {
+        const mainTaskId = event.target.dataset.taskId;
+        if (!mainTaskId) {
+            console.error("Main task ID not found for adding subtask.");
+            alert("Error: Could not find main task to add subtask to.");
+            return;
+        }
+
+        const subtaskText = prompt("Enter subtask text:");
+        if (subtaskText && subtaskText.trim() !== "") {
+            const newSubtask = {
+                id: 'subtask_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9), // Simple unique ID
+                text: subtaskText.trim(),
+                completed: false
+            };
+
+            const taskRef = db.collection('tasks').doc(mainTaskId);
+            try {
+                await taskRef.update({
+                    subtasks: firebase.firestore.FieldValue.arrayUnion(newSubtask)
+                });
+
+                // Update local tasks array
+                const taskIndex = tasks.findIndex(t => t.id === mainTaskId);
+                if (taskIndex > -1) {
+                    if (!tasks[taskIndex].subtasks) {
+                        tasks[taskIndex].subtasks = [];
+                    }
+                    tasks[taskIndex].subtasks.push(newSubtask);
+                    renderTasks(); // Re-render to show the new subtask
+                }
+            } catch (error) {
+                console.error("Error adding subtask: ", error);
+                alert("Failed to add subtask. Please try again.");
+            }
+        }
+    }
+
+    async function toggleSubtaskCompletion(event) {
+        const mainTaskId = event.target.dataset.mainTaskId;
+        const subtaskId = event.target.dataset.subtaskId;
+        const newCompletedStatus = event.target.checked;
+
+        if (!mainTaskId || !subtaskId) {
+            console.error("Missing mainTaskId or subtaskId for toggling completion.");
+            alert("Error: Could not update subtask status.");
+            return;
+        }
+
+        const taskRef = db.collection('tasks').doc(mainTaskId);
+        try {
+            const taskDoc = await taskRef.get();
+            if (taskDoc.exists) {
+                let currentSubtasks = taskDoc.data().subtasks || [];
+                const subtaskIndex = currentSubtasks.findIndex(st => st.id === subtaskId);
+
+                if (subtaskIndex > -1) {
+                    currentSubtasks[subtaskIndex].completed = newCompletedStatus;
+                    await taskRef.update({ subtasks: currentSubtasks });
+
+                    // Update local state
+                    const localTaskIndex = tasks.findIndex(t => t.id === mainTaskId);
+                    if (localTaskIndex > -1) {
+                        const localSubtaskIndex = tasks[localTaskIndex].subtasks.findIndex(st => st.id === subtaskId);
+                        if (localSubtaskIndex > -1) {
+                            tasks[localTaskIndex].subtasks[localSubtaskIndex].completed = newCompletedStatus;
+                        }
+                    }
+                    renderTasks(); // Re-render to reflect changes
+                } else {
+                    console.error("Subtask not found in Firestore document:", subtaskId);
+                    alert("Error: Subtask not found. Could not update status.");
+                }
+            } else {
+                console.error("Main task document not found:", mainTaskId);
+                alert("Error: Main task not found. Could not update subtask.");
+            }
+        } catch (error) {
+            console.error("Error toggling subtask completion: ", error);
+            alert("Failed to update subtask status. Please try again.");
+            // Optionally, revert checkbox state if Firestore update fails
+            event.target.checked = !newCompletedStatus;
+        }
+    }
+
 
     async function addTask() {
         const taskText = taskInput.value.trim();
@@ -430,7 +640,7 @@ document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLo
             alert('Please enter a task.');
             return;
         }
-        const newTask = { text: taskText, completed: false };
+        const newTask = { text: taskText, completed: false, subtasks: [] };
         try {
             const docRef = await db.collection('tasks').add(newTask);
             tasks.push({ ...newTask, id: docRef.id }); // Add to local array with new ID
