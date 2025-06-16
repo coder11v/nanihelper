@@ -286,17 +286,6 @@
             </ul>
         </div>
 
-        <hr>
-
-        <div class="controls">
-            <h2>Controls</h2>
-            <button id="saveBtn">Save to .vibhelper</button>
-            <label for="loadFile">Load from .vibhelper:</label>
-            <input type="file" id="loadFile" accept=".vibhelper">
-        </div>
-
-        <hr>
-
         <h2>Chat</h2>
         <div id="chatMessages" class="chat-messages">
         </div>
@@ -304,14 +293,30 @@
         <button id="sendChatBtn">Send</button>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script>
-document.addEventListener('DOMContentLoaded', () => {
+// Firebase configuration and initialization
+const firebaseConfig = {
+  apiKey: "AIzaSyAC2uTDSsfKNLhTKRZEdFFComXE0h74Gpk",
+  authDomain: "vibtechnanda.firebaseapp.com",
+  projectId: "vibtechnanda",
+  storageBucket: "vibtechnanda.firebasestorage.app",
+  messagingSenderId: "914097976138",
+  appId: "1:914097976138:web:244959a102ce3de7ca07b3",
+  measurementId: "G-G5YV4JJ1PQ"
+};
+
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig); // Using compat version
+const db = firebase.firestore(); // Using compat version for Firestore
+// const analytics = firebase.getAnalytics(app); // Analytics is optional, can be enabled if needed by uncommenting
+
+document.addEventListener('DOMContentLoaded', async () => { // Made DOMContentLoaded async
     const taskInput = document.getElementById('taskInput');
     const addTaskBtn = document.getElementById('addTaskBtn');
     const taskListTasker = document.getElementById('taskListTasker');
     const taskListVib = document.getElementById('taskListVib');
-    const saveBtn = document.getElementById('saveBtn');
-    const loadFileIn = document.getElementById('loadFile');
     const taskerView = document.getElementById('taskerView');
     const vibView = document.getElementById('vibView');
     const chatMessagesDiv = document.getElementById('chatMessages');
@@ -335,27 +340,41 @@ document.addEventListener('DOMContentLoaded', () => {
         { text: "Set up Google One sharing with 5 people.", completed: false }
     ];
 
-    function saveData() {
-        localStorage.setItem('vibHelperTasks', JSON.stringify(tasks));
-        localStorage.setItem('vibHelperChat', JSON.stringify(chatMessages));
+    async function loadData() {
+        try {
+            // Load tasks
+            const tasksSnapshot = await db.collection('tasks').get();
+            if (tasksSnapshot.empty) {
+                console.log('No tasks found in Firestore, populating with default tasks.');
+                const taskPromises = defaultTasks.map(async (task) => {
+                    const docRef = await db.collection('tasks').add(task);
+                    return { ...task, id: docRef.id }; // Add Firestore ID to local task object
+                });
+                tasks = await Promise.all(taskPromises);
+            } else {
+                tasks = tasksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            }
+            renderTasks(); // Render tasks once after fetching
+
+        } catch (error) {
+            console.error("Error loading task data from Firestore: ", error);
+            tasks = defaultTasks; // Fallback for tasks
+            renderTasks(); // Render default tasks if error
+        }
+        // Chat messages will be loaded and kept in sync by listenForChatMessages
     }
 
-    function loadData() {
-        const savedTasks = localStorage.getItem('vibHelperTasks');
-        const savedChat = localStorage.getItem('vibHelperChat');
-
-        if (savedTasks) {
-            tasks = JSON.parse(savedTasks);
-        } else {
-            tasks = defaultTasks;
-            saveData();
-        }
-
-        if (savedChat) {
-            chatMessages = JSON.parse(savedChat);
-        } else {
-            chatMessages = [];
-        }
+    function listenForChatMessages() {
+        db.collection('chatMessages').orderBy('timestamp')
+            .onSnapshot(snapshot => {
+                chatMessages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderChatMessages();
+            }, error => {
+                console.error("Error listening for chat messages: ", error);
+                // Optionally, inform the user that chat is unavailable
+                chatMessages = [];
+                renderChatMessages(); // Clear chat display on error
+            });
     }
 
     function renderTasks() {
@@ -375,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
             completeBtnTasker.textContent = task.completed ? 'Undo' : 'Complete';
             completeBtnTasker.classList.add('secondary');
             completeBtnTasker.style.marginLeft = '10px';
-            completeBtnTasker.onclick = () => toggleTask(index);
+            completeBtnTasker.onclick = () => toggleTask(index); // Pass index, toggleTask will use tasks[index].id
             taskerItem.appendChild(completeBtnTasker);
 
             if (task.completed) {
@@ -395,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
             completeBtnVib.textContent = task.completed ? 'Undo' : 'Check Off';
             completeBtnVib.classList.add('secondary');
             completeBtnVib.style.marginLeft = '10px';
-            completeBtnVib.onclick = () => toggleTask(index);
+            completeBtnVib.onclick = () => toggleTask(index); // Pass index
             vibItem.appendChild(completeBtnVib);
 
             if (task.completed) {
@@ -405,23 +424,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function addTask() {
+    async function addTask() {
         const taskText = taskInput.value.trim();
         if (taskText === '') {
             alert('Please enter a task.');
             return;
         }
-        tasks.push({ text: taskText, completed: false });
-        taskInput.value = '';
-        saveData();
-        renderTasks();
+        const newTask = { text: taskText, completed: false };
+        try {
+            const docRef = await db.collection('tasks').add(newTask);
+            tasks.push({ ...newTask, id: docRef.id }); // Add to local array with new ID
+            taskInput.value = '';
+            renderTasks();
+        } catch (error) {
+            console.error("Error adding task to Firestore: ", error);
+            alert("Failed to add task. Please try again.");
+        }
     }
 
-    function toggleTask(index) {
-        if (tasks[index]) {
-            tasks[index].completed = !tasks[index].completed;
-            saveData();
-            renderTasks();
+    async function toggleTask(index) {
+        if (tasks[index] && tasks[index].id) {
+            const task = tasks[index];
+            const newStatus = !task.completed;
+            try {
+                await db.collection('tasks').doc(task.id).update({ completed: newStatus });
+                tasks[index].completed = newStatus; // Update local array
+                renderTasks();
+            } catch (error) {
+                console.error("Error updating task in Firestore: ", error);
+                alert("Failed to update task. Please try again.");
+            }
+        } else {
+            console.error("Task ID not found for index:", index);
+            alert("Error: Task ID missing. Cannot update.");
         }
     }
 
@@ -447,88 +482,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function saveTasksToFile() {
-        const dataToSave = {
-            tasks: tasks,
-            chatMessages: chatMessages
-        };
-        const dataStr = JSON.stringify(dataToSave, null, 2);
-        const dataBlob = new Blob([dataStr], {type: "application/json"});
-        const url = URL.createObjectURL(dataBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'vibhelper_data.vibhelper';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-
-    function loadTasksFromFile(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const loadedData = JSON.parse(e.target.result);
-                    if (loadedData) {
-                        if (loadedData.tasks) {
-                            tasks = loadedData.tasks;
-                        } else {
-                            tasks = [];
-                        }
-                        if (loadedData.chatMessages) {
-                            chatMessages = loadedData.chatMessages;
-                        } else {
-                            chatMessages = [];
-                        }
-                        saveData();
-                        renderTasks();
-                        renderChatMessages();
-                        alert('Data loaded successfully from .vibhelper file!');
-                    } else {
-                         alert('Invalid .vibhelper file format.');
-                    }
-                } catch (error) {
-                    console.error("Error parsing .vibhelper file:", error);
-                    alert('Error loading .vibhelper file. Make sure it is a valid JSON file.');
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = null;
-        }
-    }
-
     function renderChatMessages() {
         chatMessagesDiv.innerHTML = '';
         chatMessages.forEach(msg => {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
-            messageElement.textContent = `[${new Date(msg.timestamp).toLocaleTimeString()}]: ${msg.text}`;
+            const timestamp = msg.timestamp ? msg.timestamp.toDate().toLocaleTimeString() : 'Sending...';
+            messageElement.textContent = `[${timestamp}]: ${msg.text}`;
             chatMessagesDiv.appendChild(messageElement);
         });
         chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
     }
 
-    function sendChatMessage() {
+    async function sendChatMessage() {
         const text = chatInput.value.trim();
         if (text === '') return;
 
-        chatMessages.push({
+        const newMessage = {
             text: text,
-            timestamp: new Date().toISOString()
-        });
-        chatInput.value = '';
-        saveData();
-        renderChatMessages();
+            timestamp: firebase.firestore.FieldValue.serverTimestamp() // Use server timestamp
+        };
+
+        try {
+            const docRef = await db.collection('chatMessages').add(newMessage);
+            // The onSnapshot listener will automatically update the UI.
+            // No need to manually add to local chatMessages array or call renderChatMessages here.
+            chatInput.value = '';
+            // If you want an optimistic update (message appears immediately before Firestore confirms),
+            // you could add it to a temporary local list and render, then reconcile when snapshot updates.
+            // For simplicity now, we rely on the listener.
+        } catch (error) {
+            console.error("Error sending chat message: ", error);
+            alert("Failed to send message. Please try again.");
+        }
     }
 
     addTaskBtn.addEventListener('click', addTask);
     taskInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') addTask();
     });
-    saveBtn.addEventListener('click', saveTasksToFile);
-    loadFileIn.addEventListener('change', loadTasksFromFile);
     sendChatBtn.addEventListener('click', sendChatMessage);
     chatInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -536,9 +528,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    loadData();
-    renderTasks();
-    renderChatMessages();
+    // Initial actions
+    await loadData(); // Load initial tasks
+    listenForChatMessages(); // Start listening for real-time chat updates
     switchView();
 });
 </script>
